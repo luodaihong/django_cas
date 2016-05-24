@@ -36,6 +36,6 @@ to the admin interface.
 .. _Django: http://www.djangoproject.com/
 """,
     name='django_cas',
-    packages=['django_cas']
+    packages=['django_cas'],
     version='2.0.3Luo',
 )
