@@ -1,3 +1,9 @@
+The origin peoject is https://bitbucket.org/cpcc/django-cas.It was last updated
+at 2013-04-01.I forked from it, and did these changes:
+1.adapt to django1.5.0:get_host() to request.get_host()
+2.adapt to django1.5.0:user.message_set.create() to messages.info()
+3.Add CAS_EXTRA_LOGOUT_PARAMS
+
 = Django CAS =
 
 `django_cas` is a [http://www.ja-sig.org/products/cas/ CAS] 1.0 and CAS 2.0
@@ -48,6 +54,8 @@ Optional settings include:
       If undefined, the CAS middleware will check the view being rendered to
       see if it lives in `django.contrib.admin.views`.
     * `CAS_EXTRA_LOGIN_PARAMS`: Extra URL parameters to add to the login URL
+      when redirecting the user.
+    * `CAS_EXTRA_LOGOUT_PARAMS`: Extra URL parameters to add to the logout URL
       when redirecting the user.
     * `CAS_IGNORE_REFERER`: If `True`, logging out of the application will
       always send the user to the URL specified by `CAS_REDIRECT_URL`.
