@@ -3,9 +3,10 @@
 from urllib import urlencode
 from urlparse import urljoin
 
-from django.http import get_host, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib import messages
 
 __all__ = ['login', 'logout']
 
@@ -13,7 +14,7 @@ def _service_url(request, redirect_to=None):
     """Generates application service URL for CAS"""
 
     protocol = ('http://', 'https://')[request.is_secure()]
-    host = get_host(request)
+    host = request.get_host()
     service = protocol + host + request.path
     if redirect_to:
         if '?' in service:
@@ -36,7 +37,7 @@ def _redirect_url(request):
         else:
             next = request.META.get('HTTP_REFERER', settings.CAS_REDIRECT_URL)
         prefix = (('http://', 'https://')[request.is_secure()] +
-                  get_host(request))
+                  request.get_host())
         if next.startswith(prefix):
             next = next[len(prefix):]
     return next
@@ -57,8 +58,11 @@ def _logout_url(request, next_page=None):
     url = urljoin(settings.CAS_SERVER_URL, 'logout')
     if next_page:
         protocol = ('http://', 'https://')[request.is_secure()]
-        host = get_host(request)
-        url += '?' + urlencode({'url': protocol + host + next_page})
+        host = request.get_host()
+        params = {'service': protocol + host + next_page}
+        if settings.CAS_EXTRA_LOGOUT_PARAMS and isinstance(settings.CAS_EXTRA_LOGOUT_PARAMS, dict):
+            params.update(settings.CAS_EXTRA_LOGOUT_PARAMS)
+        url += '?' + urlencode(params)
     return url
 
 
@@ -69,7 +73,8 @@ def login(request, next_page=None, required=False):
         next_page = _redirect_url(request)
     if request.user.is_authenticated():
         message = "You are logged in as %s." % request.user.username
-        request.user.message_set.create(message=message)
+        #request.user.message_set.create(message=message)
+        messages.info(request, message)
         return HttpResponseRedirect(next_page)
     ticket = request.GET.get('ticket')
     service = _service_url(request, next_page)
@@ -80,7 +85,8 @@ def login(request, next_page=None, required=False):
             auth.login(request, user)
             name = user.first_name or user.username
             message = "Login succeeded. Welcome, %s." % name
-            user.message_set.create(message=message)
+            #user.message_set.create(message=message)
+            messages.info(request, message)
             return HttpResponseRedirect(next_page)
         elif settings.CAS_RETRY_LOGIN or required:
             return HttpResponseRedirect(_login_url(service))
