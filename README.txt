@@ -1,8 +1,13 @@
-The origin peoject is https://bitbucket.org/cpcc/django-cas.It was last updated
-at 2013-04-01.I forked from it, and did these changes:
+The origin peoject is https://bitbucket.org/cpcc/django-cas.
+It was last updated at 2013-04-01.I forked from it, and did these changes:
+
 1.adapt to django1.5.0:get_host() to request.get_host()
 2.adapt to django1.5.0:user.message_set.create() to messages.info()
 3.Add CAS_EXTRA_LOGOUT_PARAMS
+
+V1.0 stable:https://github.com/luodaihong/django_cas/releases/tag/django_cas_v1.0_stable
+first: git clone source code, or download zip, tar.gz
+then: python setup.py install
 
 = Django CAS =
 
